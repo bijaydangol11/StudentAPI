@@ -4,8 +4,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import com.kiran.student.R
 import com.kiran.student.entity.User
+import com.kiran.student.repository.UserRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var etFname: EditText
@@ -36,7 +44,23 @@ class RegisterActivity : AppCompatActivity() {
                 etPassword.requestFocus()
                 return@setOnClickListener
             } else {
-                val user = User(fname, lname, username, password)
+                val user = User(fname=fname, lname=lname, username=username, password=password)
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val repository=UserRepository()
+                        val response=repository.registerUser(user)
+                        if (response.success==true){
+                            withContext(Main) {
+                                Toast.makeText(this@RegisterActivity, "reegistered", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                    catch(ex:Exception) {
+                        withContext(Main) {
+                            Toast.makeText(this@RegisterActivity, ex.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
 
                 // Api code goes here
 
