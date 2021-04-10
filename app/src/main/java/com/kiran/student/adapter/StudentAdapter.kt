@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kiran.student.R
+import com.kiran.student.api.ServiceBuilder
 import com.kiran.student.entity.Student
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -49,9 +50,13 @@ class StudentAdapter(
         holder.tvSalary.text=detail.gender
         holder.tvAge.text=detail.age.toString()
 //        load iamge with glide library
-        Glide.with(context)
-            .load(detail.photo)
-            .into(holder.imgProfile)
+        val imagePath = ServiceBuilder.loadImagePath() + detail.photo
+        if (!detail.photo.equals("no-photo.jpg")) {
+            Glide.with(context)
+                .load(imagePath)
+                .fitCenter()
+                .into(holder.imgProfile)
+        }
 
         holder.imgProfile.setOnClickListener {
             Toast.makeText(context,"${detail.fullname} clicked", Toast.LENGTH_LONG).show()
